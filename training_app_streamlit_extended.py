@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import itertools
 from collections import Counter
-import json
 
 MAX_FRISCHE = 100
 
@@ -18,25 +17,9 @@ default_einheiten = [
     {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0}  # Auslaufen mit -13 Frischeverbrauch
 ]
 
-# Funktion zum Laden der Einheiten aus einer JSON-Datei
-def lade_einheiten_von_datei(dateiname="einheiten.json"):
-    try:
-        with open(dateiname, "r", encoding="utf-8") as f:
-            einheiten = json.load(f)
-        return einheiten
-    except FileNotFoundError:
-        st.error(f"Die Datei {dateiname} wurde nicht gefunden.")
-        return []
-    except json.JSONDecodeError:
-        st.error(f"Die Datei {dateiname} ist nicht korrekt formatiert.")
-        return []
-
-# Wenn die Einheiten noch nicht im session_state sind, lade sie aus der JSON-Datei oder verwende die Standard-Einheiten
+# Speichern der Einheiten im Streamlit-Speicher
 if "einheiten" not in st.session_state:
-    st.session_state.einheiten = lade_einheiten_von_datei() or default_einheiten
-
-# Standardmäßig ausgewählte Einheiten (basierend auf den Namen)
-default_selected_einheiten = ["Joggen m. Ball", "Langhanteln II", "Slalomdribbling II", "Passen", "Medizinball II"]
+    st.session_state.einheiten = default_einheiten.copy()
 
 def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
     best_combinations = []
@@ -63,44 +46,31 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
 
-    # Zeige die Einheiten als Tabelle
+    # Anzeige der verfügbaren Einheiten
+    st.subheader("📋 Verfügbare Einheiten")
+    # Anzeige einer Tabelle mit den verfügbaren Einheiten
     df = pd.DataFrame(st.session_state.einheiten)
-    
-    # Einheiten Tabelle im Dropdown/Expander anzeigen
-    st.subheader("📝 Verfügbare Einheiten")
-    with st.expander("Einheiten anzeigen"):
-        st.dataframe(df)
-
-    # Einheiten-Auswahl für das Training
-    st.subheader("🔢 Wähle Einheiten für das Training aus")
-    available_unit_names = [unit["name"] for unit in st.session_state.einheiten]
-    
-    # Standardmäßig ausgewählte Einheiten (auf Basis der Namen)
-    selected_units_names = default_selected_einheiten
-    selected_units = [unit for unit in st.session_state.einheiten if unit["name"] in selected_units_names]
-
-    # Auswahlfeld für die Einheiten
-    selected_units_names = st.multiselect(
-        "Wähle die Einheiten, die für die Optimierung berücksichtigt werden sollen:",
-        available_unit_names,
-        default=selected_units_names  # Standardmäßig die zuletzt ausgewählten Einheiten
-    )
-
-    # Filtere die ausgewählten Einheiten aus
-    selected_einheiten = [unit for unit in st.session_state.einheiten if unit["name"] in selected_units_names]
+    st.dataframe(df)
 
     st.subheader("🔢 Parameter wählen")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
     verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
 
+    st.subheader("🔘 Einheiten auswählen")
+    selected_units = st.multiselect(
+        "Wähle Einheiten aus",
+        options=[e["name"] for e in st.session_state.einheiten],
+        default=[e["name"] for e in default_einheiten]  # Setzt hier die Standardauswahl
+    )
+
     if st.button("🔍 Beste Kombinationen berechnen"):
-        # Berechne Kombinationen mit den ausgewählten Einheiten
-        ergebnisse = berechne_best_kombinationen(selected_einheiten, restfrische, verfuegbare_zeit, top_n=5)
+        # Berechne Kombinationen
+        ergebnisse = berechne_best_kombinationen(st.session_state.einheiten, restfrische, verfuegbare_zeit, top_n=10)
         
         if not ergebnisse:
             st.warning("Keine gültigen Kombinationen gefunden.")
         else:
-            st.subheader("🏆 Top 5 Kombinationen")
+            st.subheader("🏆 Top 10 Kombinationen")
             for idx, (combo_counter, punkte, dauer, frische) in enumerate(ergebnisse):
                 # Anzeige der Kombination ohne Reihenfolge, aber mit Zählung der Einheiten
                 combo_str = ", ".join([f"{count}x {name}" for name, count in combo_counter.items()])
