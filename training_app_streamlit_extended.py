@@ -81,10 +81,18 @@ def main():
     verfuegbare_zeit = st.sidebar.number_input("Verfügbare Trainingszeit [Stunden]", min_value=1, value=5)
     top_n = st.sidebar.slider("Top Kombinationen anzeigen", 1, 10, 5)
 
+    # Standardmäßig vorab ausgewählte Einheiten
+    standard_auswahl = [
+        "Langhanteln II", "Auslaufen", "Slalomdribbling II", 
+        "Joggen m. Ball", "Passen", "Medizinball II", "Jonglieren"
+    ]
+    
     st.subheader("Einheitenauswahl")
-    ausgewaehlt_namen = st.multiselect("Welche Einheiten sollen berücksichtigt werden?",
-                                       options=[e["name"] for e in einheiten],
-                                       default=[e["name"] for e in einheiten])
+    ausgewaehlt_namen = st.multiselect(
+        "Welche Einheiten sollen berücksichtigt werden?",
+        options=[e["name"] for e in einheiten],
+        default=standard_auswahl
+    )
     gefilterte_einheiten = [e for e in einheiten if e["name"] in ausgewaehlt_namen]
 
     if st.button("💡 Beste Kombination berechnen"):
