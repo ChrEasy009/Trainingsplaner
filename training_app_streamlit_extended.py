@@ -35,8 +35,8 @@ def lade_einheiten_von_datei(dateiname="einheiten.json"):
 if "einheiten" not in st.session_state:
     st.session_state.einheiten = lade_einheiten_von_datei() or default_einheiten
 
-# Standardmäßig ausgewählte Einheiten (basierend auf den zuletzt erwähnten)
-default_selected_einheiten = ["Joggen mit Ball", "Langhanteln", "Slalomdribbling", "Passen", "Medizinball"]
+# Standardmäßig ausgewählte Einheiten (basierend auf den Namen)
+default_selected_einheiten = ["Joggen m. Ball", "Langhanteln II", "Slalomdribbling II", "Passen", "Medizinball II"]
 
 def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
     best_combinations = []
