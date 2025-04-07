@@ -1,103 +1,54 @@
 import streamlit as st
-import pandas as pd
-import json
-from collections import Counter
 import itertools
+from collections import Counter
+import json
+import os
 
-# Konstanten
 MAX_FRISCHE = 100
-EINHEITEN_DATEI = "einheiten.json"  # Die JSON-Datei mit den Einheiten
 
-# Einheiten aus der JSON-Datei laden
+# Einheiten laden aus einheiten.json
+@st.cache_data
 def lade_einheiten():
-    with open(EINHEITEN_DATEI, 'r') as f:
-        einheiten = json.load(f)
-    return einheiten
+    with open("einheiten.json", "r", encoding="utf-8") as f:
+        return json.load(f)
 
-# Berechnung der besten Kombinationen
-def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=10):
-    valid_combinations = []
-    
-    # Alle Kombinationen erstellen
+# Beste Kombinationen berechnen
+def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
+    best_combinations = []
+
     for n in range(1, len(einheiten) + 1):
-        for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
-            gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
-            gesamtzeit = sum(unit['dauer'] for unit in combo)  # Die Dauer jeder Einheit wird nun berücksichtigt
+        for combo in itertools.combinations_with_replacement(einheiten, n):
+            dauer = sum(e["dauer"] for e in combo)
+            frische = sum(e["frischeverbrauch"] for e in combo)
+            punkte = sum(e["skillpunkte"] for e in combo)
 
-            # Überprüfen, ob der Gesamtfrischeverbrauch und die Gesamtzeit innerhalb der erlaubten Grenzen liegen
-            if gesamtfrische <= restfrische and gesamtzeit <= verfuegbare_zeit:
-                gesamt_skills = Counter()
-                for unit in combo:
-                    gesamt_skills.update(unit['skills'])
-                valid_combinations.append((gesamt_skills, gesamtfrische, gesamtzeit, combo))
+            if dauer <= verfuegbare_zeit and frische <= max_frische:
+                counter = Counter([e["name"] for e in combo])
+                best_combinations.append((counter, punkte, dauer, frische))
 
-    # Top-N besten Kombinationen nach Gesamt-Skills (Sortierung nach höchster Skill-Punkte-Summe)
-    valid_combinations.sort(key=lambda x: sum(x[0].values()), reverse=True)
+    best_combinations.sort(key=lambda x: x[1], reverse=True)
+    return best_combinations[:top_n]
 
-    return valid_combinations[:top_n]
-
-# Funktion zur Ausgabe der besten Kombinationen
-def zeige_besten_auswahl(best_kombinationen):
-    for index, (skills, frische, zeit, combo) in enumerate(best_kombinationen):
-        st.write(f"**Kombination {index + 1}:**")
-        
-        # Einheiten mit Anzahl in einer Zeile
-        einheiten_anzahl = {}
-        for unit in combo:
-            einheiten_anzahl[unit['name']] = einheiten_anzahl.get(unit['name'], 0) + 1
-        
-        einheiten_text = "; ".join([f"{anzahl}x {einheit}" for einheit, anzahl in einheiten_anzahl.items()])
-        st.write(f"**Einheiten:** {einheiten_text}")
-        
-        # Summe der Skillpunkte
-        gesamt_skills_summe = sum(skills.values())
-        st.write(f"**Summe der Skillpunkte:** {gesamt_skills_summe}")
-        
-        # Einzelne Skills
-        st.write("**Einzelne Skills:**")
-        for skill, value in skills.items():
-            st.write(f"  {value} {skill}")
-        
-        # Dauer und Frischeverbrauch
-        st.write(f"**Gesamt Frischeverbrauch:** {frische}")
-        st.write(f"**Gesamt Zeitaufwand:** {zeit} Stunden")
-        st.write("")
-
-# Streamlit-App
+# UI & Hauptlogik
 def main():
-    # Lade die Einheiten
+    st.title("⚽ Trainingsplan-Optimierer")
+
     einheiten = lade_einheiten()
-    
-    # Benutzeroberfläche für die Eingabe
-    st.title("Trainingsplaner")
 
-    restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 100)
-    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=8)
-    top_n = st.number_input("Top N besten Kombinationen anzeigen", min_value=1, max_value=10, value=5)
+    st.subheader("🔢 Parameter wählen")
+    restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
+    verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
 
-    # Auswahl der verfügbaren Einheiten (Checkboxes oder Dropdown)
-    st.subheader("Wähle deine verfügbaren Einheiten aus:")
-    einheiten_names = [unit['name'] for unit in einheiten]
-    ausgewaehlte_einheiten_namen = st.multiselect(
-        "Verfügbare Einheiten", einheiten_names, default=einheiten_names[:3]  # Optional: Standardmäßig die ersten 3 Einheiten
-    )
-    
-    # Filtere die ausgewählten Einheiten
-    ausgewaehlte_einheiten = [unit for unit in einheiten if unit['name'] in ausgewaehlte_einheiten_namen]
+    if st.button("🔍 Beste Kombinationen berechnen"):
+        ergebnisse = berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit)
 
-    # Berechnung der besten Kombinationen
-    if st.button("Berechne beste Kombinationen"):
-        # Sicherstellen, dass der Frischeverbrauch nie unter 0 geht
-        if restfrische < 0:
-            st.error("Frische kann nicht negativ sein!")
+        if not ergebnisse:
+            st.warning("Keine gültigen Kombinationen gefunden.")
         else:
-            best_kombinationen = berechne_best_kombinationen(ausgewaehlte_einheiten, restfrische, verfuegbare_zeit, top_n)
-            zeige_besten_auswahl(best_kombinationen)
+            st.subheader("🏆 Top 10 Kombinationen")
+            for idx, (combo_counter, punkte, dauer, frische) in enumerate(ergebnisse):
+                combo_str = ", ".join([f"{count}x {name}" for name, count in combo_counter.items()])
+                st.markdown(f"**{idx+1}. {combo_str}**  \nSkillpunkte: {punkte} | Dauer: {dauer}h | Frischeverbrauch: {frische}")
 
-    # Tabelle mit den verfügbaren Einheiten anzeigen
-    df = pd.DataFrame(einheiten)
-    st.write("Verfügbare Einheiten:", df)
-
-# Main-App ausführen
 if __name__ == "__main__":
     main()
