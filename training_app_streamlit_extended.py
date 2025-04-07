@@ -19,12 +19,12 @@ def lade_einheiten():
     return einheiten
 
 # Berechnung der besten Kombinationen
-def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=10):
+def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit):
     valid_combinations = []
     
-    # Alle Kombinationen erstellen
+    # Alle Kombinationen erstellen (ohne Wiederholungen, also ohne combinations_with_replacement)
     for n in range(1, len(einheiten) + 1):
-        for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
+        for combo in itertools.combinations(einheiten, n):  # Kombinationen ohne Wiederholungen
             gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
             gesamtzeit = len(combo)  # Annahme: Jede Einheit dauert 1 Stunde
             
@@ -45,10 +45,10 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=
             [{"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 20}]
         )]
 
-    # Top-N besten Kombinationen nach Gesamt-Skills (Sortierung nach höchster Skill-Punkte-Summe)
+    # Top-5 besten Kombinationen nach Gesamt-Skills (Sortierung nach höchster Skill-Punkte-Summe)
     valid_combinations.sort(key=lambda x: sum(x[0].values()), reverse=True)
 
-    return valid_combinations[:top_n]
+    return valid_combinations[:5]  # Nur die besten 5 Kombinationen zurückgeben
 
 # Funktion zur Ausgabe der besten Kombinationen
 def zeige_besten_auswahl(best_kombinationen):
@@ -74,7 +74,6 @@ def main():
 
     restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 10)
     verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=1)
-    top_n = st.number_input("Top N besten Kombinationen anzeigen", min_value=1, max_value=10, value=5)
 
     # Multi-Select für Einheiten
     available_units = [unit['name'] for unit in einheiten]
@@ -87,7 +86,7 @@ def main():
 
     # Berechnung der besten Kombinationen
     if st.button("Berechne beste Kombinationen"):
-        best_kombinationen = berechne_best_kombinationen(filtered_einheiten, restfrische, verfuegbare_zeit, top_n)
+        best_kombinationen = berechne_best_kombinationen(filtered_einheiten, restfrische, verfuegbare_zeit)
         zeige_besten_auswahl(best_kombinationen)
 
     # Tabelle mit den verfügbaren Einheiten anzeigen
