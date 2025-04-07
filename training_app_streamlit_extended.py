@@ -12,6 +12,10 @@ EINHEITEN_DATEI = "einheiten.json"  # Die JSON-Datei mit den Einheiten
 def lade_einheiten():
     with open(EINHEITEN_DATEI, 'r') as f:
         einheiten = json.load(f)
+    # Sicherstellen, dass jede Einheit den Schlüssel 'skills' hat
+    for unit in einheiten:
+        if 'skills' not in unit:
+            unit['skills'] = {}  # Leeres Dictionary, falls 'skills' nicht vorhanden ist
     return einheiten
 
 # Berechnung der besten Kombinationen
