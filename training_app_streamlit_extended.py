@@ -39,15 +39,28 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=
 # Funktion zur Ausgabe der besten Kombinationen
 def zeige_besten_auswahl(best_kombinationen):
     for index, (skills, frische, zeit, combo) in enumerate(best_kombinationen):
-        st.write(f"Kombination {index + 1}:")
-        st.write("Einheiten:")
+        st.write(f"**Kombination {index + 1}:**")
+        
+        # Einheiten mit Anzahl in einer Zeile
+        einheiten_anzahl = {}
         for unit in combo:
-            st.write(f"- {unit['name']}")
-        st.write("Skills:")
+            einheiten_anzahl[unit['name']] = einheiten_anzahl.get(unit['name'], 0) + 1
+        
+        einheiten_text = "; ".join([f"{anzahl}x {einheit}" for einheit, anzahl in einheiten_anzahl.items()])
+        st.write(f"**Einheiten:** {einheiten_text}")
+        
+        # Summe der Skillpunkte
+        gesamt_skills_summe = sum(skills.values())
+        st.write(f"**Summe der Skillpunkte:** {gesamt_skills_summe}")
+        
+        # Einzelne Skills
+        st.write("**Einzelne Skills:**")
         for skill, value in skills.items():
-            st.write(f"  {skill}: {value}")
-        st.write(f"Gesamt Frischeverbrauch: {frische}")
-        st.write(f"Gesamt Zeitaufwand: {zeit} Stunden")
+            st.write(f"  {value} {skill}")
+        
+        # Dauer und Frischeverbrauch
+        st.write(f"**Gesamt Frischeverbrauch:** {frische}")
+        st.write(f"**Gesamt Zeitaufwand:** {zeit} Stunden")
         st.write("")
 
 # Streamlit-App
@@ -74,8 +87,12 @@ def main():
 
     # Berechnung der besten Kombinationen
     if st.button("Berechne beste Kombinationen"):
-        best_kombinationen = berechne_best_kombinationen(ausgewaehlte_einheiten, restfrische, verfuegbare_zeit, top_n)
-        zeige_besten_auswahl(best_kombinationen)
+        # Sicherstellen, dass der Frischeverbrauch nie unter 0 geht
+        if restfrische < 0:
+            st.error("Frische kann nicht negativ sein!")
+        else:
+            best_kombinationen = berechne_best_kombinationen(ausgewaehlte_einheiten, restfrische, verfuegbare_zeit, top_n)
+            zeige_besten_auswahl(best_kombinationen)
 
     # Tabelle mit den verfügbaren Einheiten anzeigen
     df = pd.DataFrame(einheiten)
