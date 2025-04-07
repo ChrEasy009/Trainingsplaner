@@ -46,6 +46,27 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
 
+    # Formular zum Hinzufügen einer neuen Einheit
+    st.subheader("➕ Neue Einheit hinzufügen")
+    with st.form(key="einheit_hinzufuegen"):
+        name = st.text_input("Name der Einheit")
+        dauer = st.number_input("Dauer (h)", min_value=1, max_value=12, value=1)
+        frische = st.number_input("Frischeverbrauch", min_value=1, max_value=100, value=10)
+        punkte = st.number_input("Skillpunkte", min_value=1, value=10)
+        
+        submit_button = st.form_submit_button(label="Einheit hinzufügen")
+        
+        if submit_button:
+            if name:
+                # Einheit zur Liste hinzufügen
+                st.session_state.einheiten.append({
+                    "name": name,
+                    "dauer": dauer,
+                    "frischeverbrauch": frische,
+                    "skillpunkte": punkte
+                })
+                st.success(f"Einheit '{name}' hinzugefügt.")
+
     # Einheiten Tabelle anzeigen und bearbeiten
     df = pd.DataFrame(st.session_state.einheiten)
     
