@@ -22,20 +22,20 @@ def lade_einheiten():
 def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit):
     valid_combinations = []
     
-    # Alle Kombinationen erstellen (mit Wiederholungen, also mit combinations_with_replacement)
+    # Alle Kombinationen mit Wiederholung (kombinationen mit Wiederholung)
     for n in range(1, verfuegbare_zeit + 1):  # max Anzahl an Kombinationen, basierend auf der verfügbaren Zeit
         for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
             gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
             gesamtzeit = sum(unit['dauer'] for unit in combo)  # Zeit pro Einheit wird aus 'dauer' entnommen
             
-            # Überprüfen, ob der Gesamtfrischeverbrauch innerhalb der erlaubten Grenze liegt
+            # Überprüfen, ob der Gesamtfrischeverbrauch und die Gesamtzeit innerhalb der erlaubten Grenzen liegen
             if gesamtfrische <= restfrische and gesamtzeit <= verfuegbare_zeit:
                 gesamt_skills = Counter()
                 for unit in combo:
                     gesamt_skills.update(unit['skills'])
                 valid_combinations.append((gesamt_skills, gesamtfrische, gesamtzeit, combo))
 
-    # Top-5 besten Kombinationen nach Gesamt-Skills (Sortierung nach höchster Skill-Punkte-Summe)
+    # Sortieren nach den Gesamt-Skills (absteigend nach der Summe der Skill-Punkte)
     valid_combinations.sort(key=lambda x: sum(x[0].values()), reverse=True)
 
     return valid_combinations[:5]  # Nur die besten 5 Kombinationen zurückgeben
