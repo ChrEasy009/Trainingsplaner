@@ -69,6 +69,7 @@ def main():
                 # Anzeige der Kombination ohne Reihenfolge, aber mit Zählung der Einheiten
                 combo_str = ", ".join([f"{count}x {name}" for name, count in combo_counter.items()])
                 st.markdown(f"**{idx+1}. {combo_str}**  \nSkillpunkte: {punkte} | Dauer: {dauer}h | Frischeverbrauch: {frische}")
+                # Hier fügen wir die Anzeige der Einzelskills hinzu
                 st.markdown(f"Kondition: {kondition} | Kraft: {kraft} | Schnelligkeit: {schnelligkeit} | Passen: {passen} | Technik: {technik}")
 
 if __name__ == "__main__":
