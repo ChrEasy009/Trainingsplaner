@@ -71,7 +71,7 @@ def main():
             selected_unit["skillpunkte"] = new_skillpunkte
             st.session_state.einheiten = [selected_unit if e["name"] == edit_name else e for e in st.session_state.einheiten]
             st.success(f"Einheit '{edit_name}' wurde erfolgreich geändert.")
-            st.experimental_rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
+            st.rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
 
         # Hinzufügen neuer Einheiten:
         st.subheader("➕ Neue Einheit hinzufügen")
@@ -89,7 +89,7 @@ def main():
                     "skillpunkte": new_skillpunkte
                 })
                 st.success(f"Neue Einheit '{new_name}' hinzugefügt.")
-                st.experimental_rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
+                st.rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
 
         # Löschen von Einheiten:
         st.subheader("❌ Einheit löschen")
@@ -98,7 +98,7 @@ def main():
         if st.button("Einheit löschen"):
             st.session_state.einheiten = [e for e in st.session_state.einheiten if e["name"] != delete_name]
             st.success(f"Einheit '{delete_name}' wurde gelöscht.")
-            st.experimental_rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
+            st.rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
 
     # Berechnungsoptionen
     st.subheader("🔢 Parameter wählen")
