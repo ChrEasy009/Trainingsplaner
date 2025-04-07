@@ -48,8 +48,13 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n)
 
                 kombi.extend([einheit] * anzahl)
 
+        # Prüfen, ob die Kombination gültig ist
         if total_frische <= restfrische and total_zeit <= verfuegbare_zeit:
             valid_combinations.append((total_skills, total_frische, total_zeit, kombi))
+
+    # Falls nur eine gültige Kombination existiert, direkt zurückgeben
+    if len(valid_combinations) == 1:
+        return valid_combinations
 
     # Nach Summe der Skills sortieren
     valid_combinations.sort(key=lambda x: sum(x[0].values()), reverse=True)
