@@ -22,9 +22,9 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=
     for n in range(1, len(einheiten) + 1):
         for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
             gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
-            gesamtzeit = len(combo)  # Annahme: Jede Einheit dauert 1 Stunde
+            gesamtzeit = len(combo)  # Jede Einheit dauert 1 Stunde (wird durch die Länge der Kombi gezählt)
             
-            # Überprüfen, ob der Gesamtfrischeverbrauch innerhalb der erlaubten Grenze liegt
+            # Überprüfen, ob der Gesamtfrischeverbrauch und die Gesamtzeit innerhalb der erlaubten Grenzen liegen
             if gesamtfrische <= restfrische and gesamtzeit <= verfuegbare_zeit:
                 gesamt_skills = Counter()
                 for unit in combo:
@@ -59,7 +59,7 @@ def main():
     st.title("Trainingsplaner")
 
     restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 100)
-    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=5)
+    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=6)
     top_n = st.number_input("Top N besten Kombinationen anzeigen", min_value=1, max_value=10, value=5)
 
     # Auswahl der verfügbaren Einheiten (Checkboxes oder Dropdown)
