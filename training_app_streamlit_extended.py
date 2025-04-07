@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import itertools
@@ -47,63 +46,28 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
 
-    # Formular zum Hinzufügen einer neuen Einheit
-    st.subheader("➕ Neue Einheit hinzufügen")
-    with st.form(key="einheit_hinzufuegen"):
-        name = st.text_input("Name der Einheit")
-        dauer = st.number_input("Dauer (h)", min_value=1, max_value=12, value=1)
-        frische = st.number_input("Frischeverbrauch", min_value=1, max_value=100, value=10)
-        punkte = st.number_input("Skillpunkte", min_value=1, value=10)
-        
-        submit_button = st.form_submit_button(label="Einheit hinzufügen")
-        
-        if submit_button:
-            if name:
-                # Einheit zur Liste hinzufügen
-                st.session_state.einheiten.append({
-                    "name": name,
-                    "dauer": dauer,
-                    "frischeverbrauch": frische,
-                    "skillpunkte": punkte
-                })
-                st.success(f"Einheit '{name}' hinzugefügt.")
-
-    # Einheiten Tabelle anzeigen und bearbeiten
-    df = pd.DataFrame(st.session_state.einheiten)
-    
-    # Zeige die Einheiten als interaktive Tabelle
-    st.subheader("📝 Einheiten bearbeiten")
-    edited_df = st.dataframe(df)
-
-    # Nach Bearbeitung des DataFrames und Drücken des "Aktualisieren"-Buttons:
-    if st.button("Aktualisieren"):
-        # Einheiten in das Session-Storage übertragen (die Tabelle wird nun gespeichert)
-        st.session_state.einheiten = edited_df.to_dict(orient="records")
-        st.success("Einheiten erfolgreich aktualisiert!")
-
-    # Einheiten löschen
-    with st.expander("🗑️ Einheiten löschen"):
-        to_delete = st.multiselect("Wähle Einheiten zum Löschen", df["name"])
-        if st.button("Ausgewählte Einheiten löschen"):
-            st.session_state.einheiten = [e for e in st.session_state.einheiten if e["name"] not in to_delete]
-            st.success("Ausgewählte Einheiten wurden gelöscht.")
-
     st.subheader("🔢 Parameter wählen")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
     verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
 
+    # Berechnung der besten Kombinationen
     if st.button("🔍 Beste Kombinationen berechnen"):
         # Berechne Kombinationen mit Auslaufen, welches eine negative Frische verbraucht
-        ergebnisse = berechne_best_kombinationen(st.session_state.einheiten, restfrische, verfuegbare_zeit, top_n=10)
+        ergebnisse = berechne_best_kombinationen(st.session_state.einheiten, restfrische, verfuegbare_zeit, top_n=5)
         
         if not ergebnisse:
             st.warning("Keine gültigen Kombinationen gefunden.")
         else:
-            st.subheader("🏆 Top 10 Kombinationen")
+            st.subheader("🏆 Beste 5 Kombinationen")
             for idx, (combo_counter, punkte, dauer, frische) in enumerate(ergebnisse):
                 # Anzeige der Kombination ohne Reihenfolge, aber mit Zählung der Einheiten
                 combo_str = ", ".join([f"{count}x {name}" for name, count in combo_counter.items()])
                 st.markdown(f"**{idx+1}. {combo_str}**  \nSkillpunkte: {punkte} | Dauer: {dauer}h | Frischeverbrauch: {frische}")
+
+    # Einheiten Tabelle anzeigen
+    with st.expander("Verfügbare Einheiten"):
+        df = pd.DataFrame(st.session_state.einheiten)
+        st.write(df)
 
 if __name__ == "__main__":
     main()
