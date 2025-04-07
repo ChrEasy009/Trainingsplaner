@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import itertools
 from collections import Counter
 
@@ -44,26 +45,23 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
+
+    # Einheiten Tabelle anzeigen und bearbeiten
+    df = pd.DataFrame(st.session_state.einheiten)
     
-    # Einheit hinzufügen
-    with st.expander("➕ Einheit hinzufügen"):
-        name = st.text_input("Name der Einheit")
-        dauer = st.number_input("Dauer (h)", min_value=1, max_value=12, value=1)
-        frische = st.number_input("Frischeverbrauch", min_value=1, max_value=100, value=10)
-        punkte = st.number_input("Skillpunkte", min_value=1, value=10)
-        if st.button("Hinzufügen"):
-            if name:
-                st.session_state.einheiten.append({
-                    "name": name,
-                    "dauer": dauer,
-                    "frischeverbrauch": frische,
-                    "skillpunkte": punkte
-                })
-                st.success(f"Einheit '{name}' hinzugefügt.")
+    # Zeige die Einheiten als interaktive Tabelle
+    st.subheader("📝 Einheiten bearbeiten")
+    edited_df = st.dataframe(df)
+
+    # Nach Bearbeitung des DataFrames und Drücken des "Aktualisieren"-Buttons:
+    if st.button("Aktualisieren"):
+        # Einheiten in das Session-Storage übertragen (die Tabelle wird nun gespeichert)
+        st.session_state.einheiten = edited_df.to_dict(orient="records")
+        st.success("Einheiten erfolgreich aktualisiert!")
 
     # Einheiten löschen
     with st.expander("🗑️ Einheiten löschen"):
-        to_delete = st.multiselect("Wähle Einheiten zum Löschen", [e["name"] for e in st.session_state.einheiten])
+        to_delete = st.multiselect("Wähle Einheiten zum Löschen", df["name"])
         if st.button("Ausgewählte Einheiten löschen"):
             st.session_state.einheiten = [e for e in st.session_state.einheiten if e["name"] not in to_delete]
             st.success("Ausgewählte Einheiten wurden gelöscht.")
