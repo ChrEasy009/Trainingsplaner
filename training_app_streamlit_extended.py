@@ -22,7 +22,7 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=
     for n in range(1, len(einheiten) + 1):
         for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
             gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
-            gesamtzeit = len(combo)  # Jede Einheit dauert 1 Stunde (wird durch die Länge der Kombi gezählt)
+            gesamtzeit = sum(unit['dauer'] for unit in combo)  # Die Dauer jeder Einheit wird nun berücksichtigt
             
             # Überprüfen, ob der Gesamtfrischeverbrauch und die Gesamtzeit innerhalb der erlaubten Grenzen liegen
             if gesamtfrische <= restfrische and gesamtzeit <= verfuegbare_zeit:
