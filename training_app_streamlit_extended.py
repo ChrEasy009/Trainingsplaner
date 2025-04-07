@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import itertools
+import json
 from collections import Counter
 
 MAX_FRISCHE = 100
+EINHEITEN_DATEI = "einheiten.json"  # Der Pfad zur JSON-Datei
 
 # Standard-Trainingseinheiten
 default_einheiten = [
@@ -17,9 +19,19 @@ default_einheiten = [
     {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0}  # Auslaufen mit -13 Frischeverbrauch
 ]
 
-# Speichern der Einheiten im Streamlit-Speicher
-if "einheiten" not in st.session_state:
-    st.session_state.einheiten = default_einheiten.copy()
+def lade_einheiten():
+    """Lädt die Einheiten aus der JSON-Datei, wenn vorhanden."""
+    try:
+        with open(EINHEITEN_DATEI, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        # Wenn die Datei nicht existiert, dann Standard-Einheiten zurückgeben
+        return default_einheiten
+
+def speichere_einheiten(einheiten):
+    """Speichert die Einheiten in der JSON-Datei."""
+    with open(EINHEITEN_DATEI, "w") as file:
+        json.dump(einheiten, file)
 
 def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
     best_combinations = []
@@ -46,10 +58,12 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
 
+    # Lade die Einheiten aus der Datei
+    einheiten = lade_einheiten()
+
     # Einheiten als Dropdown-Menü anzeigen und bearbeiten
     with st.expander("📝 Einheiten bearbeiten und hinzufügen"):
-        # Zeige die Einheiten als interaktive Dropdown-Liste
-        df = pd.DataFrame(st.session_state.einheiten)
+        df = pd.DataFrame(einheiten)
         st.write("Aktuelle Einheiten:")
         st.dataframe(df)
 
@@ -58,7 +72,7 @@ def main():
         edit_name = st.selectbox("Wähle eine Einheit zum Bearbeiten:", df["name"].tolist())
 
         # Details der gewählten Einheit anzeigen und ändern
-        selected_unit = next(e for e in st.session_state.einheiten if e["name"] == edit_name)
+        selected_unit = next(e for e in einheiten if e["name"] == edit_name)
 
         new_dauer = st.number_input(f"Neue Dauer (h) für {edit_name}", min_value=1, max_value=12, value=selected_unit["dauer"])
         new_frische = st.number_input(f"Neuer Frischeverbrauch für {edit_name}", min_value=1, max_value=100, value=selected_unit["frischeverbrauch"])
@@ -69,9 +83,9 @@ def main():
             selected_unit["dauer"] = new_dauer
             selected_unit["frischeverbrauch"] = new_frische
             selected_unit["skillpunkte"] = new_skillpunkte
-            st.session_state.einheiten = [selected_unit if e["name"] == edit_name else e for e in st.session_state.einheiten]
+            speichere_einheiten(einheiten)  # Speichern der Änderungen
             st.success(f"Einheit '{edit_name}' wurde erfolgreich geändert.")
-            st.rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
+            st.experimental_rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
 
         # Hinzufügen neuer Einheiten:
         st.subheader("➕ Neue Einheit hinzufügen")
@@ -82,23 +96,25 @@ def main():
 
         if st.button("Neue Einheit hinzufügen"):
             if new_name:
-                st.session_state.einheiten.append({
+                einheiten.append({
                     "name": new_name,
                     "dauer": new_dauer,
                     "frischeverbrauch": new_frische,
                     "skillpunkte": new_skillpunkte
                 })
+                speichere_einheiten(einheiten)  # Speichern der neuen Einheit
                 st.success(f"Neue Einheit '{new_name}' hinzugefügt.")
-                st.rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
+                st.experimental_rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
 
         # Löschen von Einheiten:
         st.subheader("❌ Einheit löschen")
         delete_name = st.selectbox("Wähle eine Einheit zum Löschen:", df["name"].tolist())
 
         if st.button("Einheit löschen"):
-            st.session_state.einheiten = [e for e in st.session_state.einheiten if e["name"] != delete_name]
+            einheiten = [e for e in einheiten if e["name"] != delete_name]
+            speichere_einheiten(einheiten)  # Speichern nach dem Löschen
             st.success(f"Einheit '{delete_name}' wurde gelöscht.")
-            st.rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
+            st.experimental_rerun()  # Die Seite neu laden, um die Änderungen direkt zu sehen
 
     # Berechnungsoptionen
     st.subheader("🔢 Parameter wählen")
@@ -107,7 +123,7 @@ def main():
 
     if st.button("🔍 Beste Kombinationen berechnen"):
         # Berechne Kombinationen mit Auslaufen, welches eine negative Frische verbraucht
-        ergebnisse = berechne_best_kombinationen(st.session_state.einheiten, restfrische, verfuegbare_zeit, top_n=10)
+        ergebnisse = berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=10)
         
         if not ergebnisse:
             st.warning("Keine gültigen Kombinationen gefunden.")
