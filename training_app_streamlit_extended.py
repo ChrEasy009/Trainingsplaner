@@ -72,7 +72,7 @@ def main():
     st.title("Trainingsplaner")
 
     restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 100)
-    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=6)
+    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=8)
     top_n = st.number_input("Top N besten Kombinationen anzeigen", min_value=1, max_value=10, value=5)
 
     # Auswahl der verfügbaren Einheiten (Checkboxes oder Dropdown)
