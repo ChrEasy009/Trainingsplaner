@@ -22,11 +22,11 @@ def lade_einheiten():
 def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit):
     valid_combinations = []
     
-    # Alle Kombinationen erstellen (ohne Wiederholungen, also ohne combinations_with_replacement)
-    for n in range(1, len(einheiten) + 1):
-        for combo in itertools.combinations(einheiten, n):  # Kombinationen ohne Wiederholungen
+    # Alle Kombinationen erstellen (mit Wiederholungen, also mit combinations_with_replacement)
+    for n in range(1, verfuegbare_zeit + 1):  # max Anzahl an Kombinationen, basierend auf der verfügbaren Zeit
+        for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
             gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
-            gesamtzeit = len(combo)  # Annahme: Jede Einheit dauert 1 Stunde
+            gesamtzeit = len(combo)  # Jede Einheit dauert 1 Stunde
             
             # Überprüfen, ob der Gesamtfrischeverbrauch innerhalb der erlaubten Grenze liegt
             if gesamtfrische <= restfrische and gesamtzeit <= verfuegbare_zeit:
@@ -73,7 +73,7 @@ def main():
     st.title("Trainingsplaner")
 
     restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 10)
-    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=1)
+    verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=8)
 
     # Multi-Select für Einheiten
     available_units = [unit['name'] for unit in einheiten]
