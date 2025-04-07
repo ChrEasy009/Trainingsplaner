@@ -5,7 +5,7 @@ from collections import Counter
 
 MAX_FRISCHE = 100
 
-# Standard-Trainingseinheiten, Auslaufen hat nun -13 Frischeverbrauch
+# Standard-Trainingseinheiten
 default_einheiten = [
     {"name": "Langhanteln II", "dauer": 3, "frischeverbrauch": 60, "skillpunkte": 180, "kondition": 0, "kraft": 120, "schnelligkeit": 0, "passen": 0, "technik": 30},
     {"name": "Slalomdribbling II", "dauer": 3, "frischeverbrauch": 30, "skillpunkte": 102, "kondition": 30, "kraft": 0, "schnelligkeit": 15, "passen": 0, "technik": 40},
