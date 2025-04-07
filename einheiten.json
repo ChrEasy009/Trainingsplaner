@@ -1,27 +1,5 @@
 [
     {
-        "name": "hartes Zirkeltraining",
-        "kosten": "0€",
-        "dauer": 1,
-        "frischeverbrauch": -60,
-        "skills": {
-            "Kondition": 54,
-            "Kraft": 54,
-            "Schnelligkeit": 54
-        }
-    },
-    {
-        "name": "einfaches Zirkeltraining",
-        "kosten": "0€",
-        "dauer": 1,
-        "frischeverbrauch": -35,
-        "skills": {
-            "Kondition": 30,
-            "Kraft": 30,
-            "Schnelligkeit": 30
-        }
-    },
-    {
         "name": "Boxen III",
         "kosten": "0€",
         "dauer": 2,
