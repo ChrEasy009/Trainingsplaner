@@ -6,6 +6,18 @@ import json
 
 MAX_FRISCHE = 100
 
+# Standard-Trainingseinheiten, Auslaufen hat nun -13 Frischeverbrauch
+default_einheiten = [
+    {"name": "Langhanteln", "dauer": 3, "frischeverbrauch": 60, "skillpunkte": 180},
+    {"name": "Slalomdribbling", "dauer": 3, "frischeverbrauch": 30, "skillpunkte": 102},
+    {"name": "Medizinball", "dauer": 3, "frischeverbrauch": 50, "skillpunkte": 126},
+    {"name": "Joggen mit Ball", "dauer": 1, "frischeverbrauch": 20, "skillpunkte": 34},
+    {"name": "Passen", "dauer": 1, "frischeverbrauch": 15, "skillpunkte": 36},
+    {"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24},
+    {"name": "Torwand", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76},
+    {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0}  # Auslaufen mit -13 Frischeverbrauch
+]
+
 # Funktion zum Laden der Einheiten aus einer JSON-Datei
 def lade_einheiten_von_datei(dateiname="einheiten.json"):
     try:
@@ -19,9 +31,12 @@ def lade_einheiten_von_datei(dateiname="einheiten.json"):
         st.error(f"Die Datei {dateiname} ist nicht korrekt formatiert.")
         return []
 
-# Wenn die Einheiten noch nicht im session_state sind, lade sie aus der JSON-Datei
+# Wenn die Einheiten noch nicht im session_state sind, lade sie aus der JSON-Datei oder verwende die Standard-Einheiten
 if "einheiten" not in st.session_state:
-    st.session_state.einheiten = lade_einheiten_von_datei()
+    st.session_state.einheiten = lade_einheiten_von_datei() or default_einheiten
+
+# Standardmäßig ausgewählte Einheiten (basierend auf den zuletzt erwähnten)
+default_selected_einheiten = ["Joggen mit Ball", "Langhanteln", "Slalomdribbling", "Passen", "Medizinball"]
 
 def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
     best_combinations = []
@@ -56,13 +71,27 @@ def main():
     with st.expander("Einheiten anzeigen"):
         st.dataframe(df)
 
+    # Einheiten-Auswahl für das Training
+    st.subheader("🔢 Wähle Einheiten für das Training aus")
+    available_unit_names = [unit["name"] for unit in st.session_state.einheiten]
+    
+    # Auswahl mit Standardauswahl der zuletzt genannten Einheiten
+    selected_units = st.multiselect(
+        "Wähle die Einheiten, die für die Optimierung berücksichtigt werden sollen:",
+        available_unit_names,
+        default=default_selected_einheiten  # Standardmäßig ausgewählte Einheiten
+    )
+
+    # Filtere die ausgewählten Einheiten aus
+    selected_einheiten = [unit for unit in st.session_state.einheiten if unit["name"] in selected_units]
+
     st.subheader("🔢 Parameter wählen")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
     verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
 
     if st.button("🔍 Beste Kombinationen berechnen"):
-        # Berechne Kombinationen mit Auslaufen, welches eine negative Frische verbraucht
-        ergebnisse = berechne_best_kombinationen(st.session_state.einheiten, restfrische, verfuegbare_zeit, top_n=5)
+        # Berechne Kombinationen mit den ausgewählten Einheiten
+        ergebnisse = berechne_best_kombinationen(selected_einheiten, restfrische, verfuegbare_zeit, top_n=5)
         
         if not ergebnisse:
             st.warning("Keine gültigen Kombinationen gefunden.")
