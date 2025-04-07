@@ -26,7 +26,7 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit):
     for n in range(1, verfuegbare_zeit + 1):  # max Anzahl an Kombinationen, basierend auf der verfügbaren Zeit
         for combo in itertools.combinations_with_replacement(einheiten, n):  # Kombinationen mit Wiederholungen
             gesamtfrische = sum(unit['frischeverbrauch'] for unit in combo)
-            gesamtzeit = len(combo)  # Jede Einheit dauert 1 Stunde
+            gesamtzeit = sum(unit['dauer'] for unit in combo)  # Zeit pro Einheit wird aus 'dauer' entnommen
             
             # Überprüfen, ob der Gesamtfrischeverbrauch innerhalb der erlaubten Grenze liegt
             if gesamtfrische <= restfrische and gesamtzeit <= verfuegbare_zeit:
@@ -34,16 +34,6 @@ def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit):
                 for unit in combo:
                     gesamt_skills.update(unit['skills'])
                 valid_combinations.append((gesamt_skills, gesamtfrische, gesamtzeit, combo))
-
-    # Wenn keine gültige Kombination gefunden wurde, eine Standardkombination (z.B. Jonglieren) zurückgeben
-    if not valid_combinations:
-        st.warning("Keine gültige Kombination gefunden! Es wird 'Jonglieren' empfohlen.")
-        valid_combinations = [(
-            Counter({"Technik": 20}),
-            10,  # Frischeverbrauch von Jonglieren
-            1,  # Zeit für Jonglieren
-            [{"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 20}]
-        )]
 
     # Top-5 besten Kombinationen nach Gesamt-Skills (Sortierung nach höchster Skill-Punkte-Summe)
     valid_combinations.sort(key=lambda x: sum(x[0].values()), reverse=True)
@@ -72,7 +62,7 @@ def main():
     # Benutzeroberfläche für die Eingabe
     st.title("Trainingsplaner")
 
-    restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 10)
+    restfrische = st.slider("Verbleibende Frische", 0, MAX_FRISCHE, 100)
     verfuegbare_zeit = st.number_input("Verfügbare Stunden für Training", min_value=1, value=8)
 
     # Multi-Select für Einheiten
