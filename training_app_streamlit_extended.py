@@ -10,7 +10,8 @@ default_einheiten = [
     {"name": "Joggen mit Ball", "dauer": 1, "frischeverbrauch": 20, "skillpunkte": 34},
     {"name": "Passen", "dauer": 1, "frischeverbrauch": 15, "skillpunkte": 36},
     {"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24},
-    {"name": "Torwand", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76}
+    {"name": "Torwand", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76},
+    {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": 0, "skillpunkte": 0}  # Auslaufen als separate Einheit
 ]
 
 if "einheiten" not in st.session_state:
@@ -19,7 +20,7 @@ if "einheiten" not in st.session_state:
 def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
     best_combinations = []
     for n in range(1, len(einheiten) + 1):
-        for combo in itertools.combinations(einheiten, n):
+        for combo in itertools.product(einheiten, repeat=n):  # Erlaubt mehrfache Verwendung
             dauer = sum(e["dauer"] for e in combo)
             frische = sum(e["frischeverbrauch"] for e in combo)
             punkte = sum(e["skillpunkte"] for e in combo)
@@ -29,6 +30,7 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
     return best_combinations[:top_n]
 
 def auslaufen(frische, max_frische, auslauf_zeit):
+    # Auslaufen Einheiten hinzufügen, um die Frische zu regenerieren
     while frische < max_frische and auslauf_zeit > 0:
         frische += 13
         if frische > max_frische:
@@ -65,6 +67,7 @@ def main():
     verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
     auslauf_zeit = st.number_input("Stunden für Auslaufen (1h = +13 Frische)", min_value=0, max_value=verfuegbare_zeit, value=0)
 
+    # Berechne die Frische nach Auslaufen
     if auslauf_zeit > 0:
         restfrische, _ = auslaufen(restfrische, MAX_FRISCHE, auslauf_zeit)
 
