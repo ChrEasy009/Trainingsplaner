@@ -75,15 +75,19 @@ def main():
     st.subheader("🔢 Wähle Einheiten für das Training aus")
     available_unit_names = [unit["name"] for unit in st.session_state.einheiten]
     
-    # Auswahl mit Standardauswahl der zuletzt genannten Einheiten
-    selected_units = st.multiselect(
+    # Standardmäßig ausgewählte Einheiten (auf Basis der Namen)
+    selected_units_names = default_selected_einheiten
+    selected_units = [unit for unit in st.session_state.einheiten if unit["name"] in selected_units_names]
+
+    # Auswahlfeld für die Einheiten
+    selected_units_names = st.multiselect(
         "Wähle die Einheiten, die für die Optimierung berücksichtigt werden sollen:",
         available_unit_names,
-        default=default_selected_einheiten  # Standardmäßig ausgewählte Einheiten
+        default=selected_units_names  # Standardmäßig die zuletzt ausgewählten Einheiten
     )
 
     # Filtere die ausgewählten Einheiten aus
-    selected_einheiten = [unit for unit in st.session_state.einheiten if unit["name"] in selected_units]
+    selected_einheiten = [unit for unit in st.session_state.einheiten if unit["name"] in selected_units_names]
 
     st.subheader("🔢 Parameter wählen")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
