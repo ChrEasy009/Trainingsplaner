@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
+import itertools  # Hier wird itertools importiert
 from collections import Counter
 
 MAX_FRISCHE = 100
