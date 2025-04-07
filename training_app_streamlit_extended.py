@@ -18,6 +18,7 @@ default_einheiten = [
 if "einheiten" not in st.session_state:
     st.session_state.einheiten = default_einheiten.copy()
 
+# Berechnung der besten Kombinationen
 def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=10):
     best_combinations = []
     
@@ -57,12 +58,15 @@ def main():
     selected_units = st.multiselect(
         "Wähle Einheiten aus",
         options=[e["name"] for e in st.session_state.einheiten],
-        default=[e["name"] for e in default_einheiten]  # Setzt hier die Standardauswahl
+        default=[e["name"] for e in default_einheiten]  # Setzt hier die Standardauswahl explizit
     )
 
     if st.button("🔍 Beste Kombinationen berechnen"):
-        # Berechne Kombinationen
-        ergebnisse = berechne_best_kombinationen(st.session_state.einheiten, restfrische, verfuegbare_zeit, top_n=10)
+        # Berechne Kombinationen basierend auf den selektierten Einheiten
+        selected_einheiten = [einheit for einheit in st.session_state.einheiten if einheit["name"] in selected_units]
+        
+        # Berechne die besten Kombinationen
+        ergebnisse = berechne_best_kombinationen(selected_einheiten, restfrische, verfuegbare_zeit, top_n=10)
         
         if not ergebnisse:
             st.warning("Keine gültigen Kombinationen gefunden.")
