@@ -1,10 +1,201 @@
 [
-    {"name": "Langhanteln", "dauer": 3, "frischeverbrauch": 60, "skillpunkte": 180},
-    {"name": "Slalomdribbling", "dauer": 3, "frischeverbrauch": 30, "skillpunkte": 102},
-    {"name": "Medizinball", "dauer": 3, "frischeverbrauch": 50, "skillpunkte": 126},
-    {"name": "Joggen mit Ball", "dauer": 1, "frischeverbrauch": 20, "skillpunkte": 34},
-    {"name": "Passen", "dauer": 1, "frischeverbrauch": 15, "skillpunkte": 36},
-    {"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24},
-    {"name": "Torwand", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76},
-    {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0}
+    {
+        "name": "hartes Zirkeltraining",
+        "kosten": "0€",
+        "dauer": 1,
+        "frischeverbrauch": -60,
+        "skills": {
+            "Kondition": 54,
+            "Kraft": 54,
+            "Schnelligkeit": 54
+        }
+    },
+    {
+        "name": "einfaches Zirkeltraining",
+        "kosten": "0€",
+        "dauer": 1,
+        "frischeverbrauch": -35,
+        "skills": {
+            "Kondition": 30,
+            "Kraft": 30,
+            "Schnelligkeit": 30
+        }
+    },
+    {
+        "name": "Boxen III",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -35,
+        "skills": {
+            "Kondition": 50,
+            "Kraft": 50
+        }
+    },
+    {
+        "name": "Torwand III",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -25,
+        "skills": {
+            "Technik": 45,
+            "Kondition": 40
+        }
+    },
+    {
+        "name": "Medizinball III",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -50,
+        "skills": {
+            "Kondition": 55,
+            "Kraft": 90
+        }
+    },
+    {
+        "name": "Hometrainer III",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -50,
+        "skills": {
+            "Kondition": 65,
+            "Schnelligkeit": 80
+        }
+    },
+    {
+        "name": "Radfahren III",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -50,
+        "skills": {
+            "Kondition": 80,
+            "Schnelligkeit": 65
+        }
+    },
+    {
+        "name": "Slalomdribbling III",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -30,
+        "skills": {
+            "Kondition": 40,
+            "Technik": 55
+        }
+    },
+    {
+        "name": "Fußballtennis III",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -30,
+        "skills": {
+            "Technik": 65,
+            "Kondition": 25
+        }
+    },
+    {
+        "name": "Gewichtsschlitten III",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -20,
+        "skills": {
+            "Kondition": 30,
+            "Kraft": 45
+        }
+    },
+    {
+        "name": "Langhanteln II",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -60,
+        "skills": {
+            "Kraft": 120
+        }
+    },
+    {
+        "name": "Fußballtennis II",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -30,
+        "skills": {
+            "Technik": 45,
+            "Kondition": 25
+        }
+    },
+    {
+        "name": "Torwand II",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -25,
+        "skills": {
+            "Technik": 33,
+            "Kondition": 30
+        }
+    },
+    {
+        "name": "Slalomdribbling II",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -30,
+        "skills": {
+            "Kondition": 30,
+            "Technik": 40
+        }
+    },
+    {
+        "name": "Medizinball II",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -50,
+        "skills": {
+            "Kondition": 40,
+            "Kraft": 65
+        }
+    },
+    {
+        "name": "Hometrainer II",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -50,
+        "skills": {
+            "Kondition": 45,
+            "Schnelligkeit": 60
+        }
+    },
+    {
+        "name": "Radfahren II",
+        "kosten": "0€",
+        "dauer": 3,
+        "frischeverbrauch": -50,
+        "skills": {
+            "Kondition": 60,
+            "Schnelligkeit": 45
+        }
+    },
+    {
+        "name": "Gewichtsschlitten II",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -20,
+        "skills": {
+            "Kondition": 21,
+            "Kraft": 35
+        }
+    },
+    {
+        "name": "Boxen II",
+        "kosten": "0€",
+        "dauer": 2,
+        "frischeverbrauch": -35,
+        "skills": {
+            "Kondition": 35,
+            "Kraft": 35
+        }
+    },
+    {
+    "name": "Auslaufen",
+    "kosten": "0€",
+    "dauer": 1,
+    "frischeverbrauch": 13,
+    "skills": {
+    }
+}
 ]
