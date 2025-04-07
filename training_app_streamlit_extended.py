@@ -46,47 +46,38 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
 
-    # Formular zum Hinzufügen einer neuen Einheit
-    st.subheader("➕ Neue Einheit hinzufügen")
-    with st.form(key="einheit_hinzufuegen"):
-        name = st.text_input("Name der Einheit")
-        dauer = st.number_input("Dauer (h)", min_value=1, max_value=12, value=1)
-        frische = st.number_input("Frischeverbrauch", min_value=1, max_value=100, value=10)
-        punkte = st.number_input("Skillpunkte", min_value=1, value=10)
-        
-        submit_button = st.form_submit_button(label="Einheit hinzufügen")
-        
-        if submit_button:
-            if name:
-                # Einheit zur Liste hinzufügen
-                st.session_state.einheiten.append({
-                    "name": name,
-                    "dauer": dauer,
-                    "frischeverbrauch": frische,
-                    "skillpunkte": punkte
-                })
-                st.success(f"Einheit '{name}' hinzugefügt.")
+    # Einheiten in Tabelle anzeigen und bearbeiten
+    st.subheader("📝 Einheiten bearbeiten und hinzufügen")
 
-    # Einheiten Tabelle anzeigen und bearbeiten
-    df = pd.DataFrame(st.session_state.einheiten)
-    
     # Zeige die Einheiten als interaktive Tabelle
-    st.subheader("📝 Einheiten bearbeiten")
+    df = pd.DataFrame(st.session_state.einheiten)
+
+    # Hier können die Benutzer Werte in der Tabelle ändern
     edited_df = st.dataframe(df)
 
-    # Nach Bearbeitung des DataFrames und Drücken des "Aktualisieren"-Buttons:
-    if st.button("Aktualisieren"):
-        # Einheiten in das Session-Storage übertragen (die Tabelle wird nun gespeichert)
-        st.session_state.einheiten = edited_df.to_dict(orient="records")
-        st.success("Einheiten erfolgreich aktualisiert!")
+    # Hinzufügen neuer Einheiten:
+    new_name = st.text_input("Name der neuen Einheit")
+    new_dauer = st.number_input("Dauer (h)", min_value=1, max_value=12, value=1)
+    new_frische = st.number_input("Frischeverbrauch", min_value=1, max_value=100, value=10)
+    new_skillpunkte = st.number_input("Skillpunkte", min_value=1, value=10)
 
-    # Einheiten löschen
-    with st.expander("🗑️ Einheiten löschen"):
-        to_delete = st.multiselect("Wähle Einheiten zum Löschen", df["name"])
-        if st.button("Ausgewählte Einheiten löschen"):
-            st.session_state.einheiten = [e for e in st.session_state.einheiten if e["name"] not in to_delete]
-            st.success("Ausgewählte Einheiten wurden gelöscht.")
-
+    if st.button("Neue Einheit hinzufügen"):
+        if new_name:
+            st.session_state.einheiten.append({
+                "name": new_name,
+                "dauer": new_dauer,
+                "frischeverbrauch": new_frische,
+                "skillpunkte": new_skillpunkte
+            })
+            st.success(f"Neue Einheit '{new_name}' hinzugefügt.")
+    
+    # Löschen von Einheiten:
+    delete_names = st.multiselect("Wähle Einheiten zum Löschen", df["name"].tolist())
+    if st.button("Ausgewählte Einheiten löschen"):
+        st.session_state.einheiten = [e for e in st.session_state.einheiten if e["name"] not in delete_names]
+        st.success("Ausgewählte Einheiten wurden gelöscht.")
+    
+    # Berechnungsoptionen
     st.subheader("🔢 Parameter wählen")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
     verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
