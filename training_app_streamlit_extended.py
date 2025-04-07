@@ -11,7 +11,18 @@ EINHEITEN_DATEI = "einheiten.json"  # JSON-Datei mit Einheiten
 # Einheiten laden
 def lade_einheiten():
     with open(EINHEITEN_DATEI, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        einheiten = json.load(f)
+    
+    # Wandelt flaches Skill-Format in geschachteltes um
+    for einheit in einheiten:
+        einheit["skills"] = {
+            "Kondition": einheit.get("kondition", 0),
+            "Kraft": einheit.get("kraft", 0),
+            "Schnelligkeit": einheit.get("schnelligkeit", 0),
+            "Passen": einheit.get("passen", 0),
+            "Technik": einheit.get("technik", 0),
+        }
+    return einheiten
 
 # Beste Kombinationen berechnen
 def berechne_best_kombinationen(einheiten, restfrische, verfuegbare_zeit, top_n=5):
