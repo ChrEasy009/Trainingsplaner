@@ -8,13 +8,13 @@ MAX_FRISCHE = 100
 
 # Standard-Trainingseinheiten, Auslaufen hat nun -13 Frischeverbrauch
 default_einheiten = [
-    {"name": "Langhanteln", "dauer": 3, "frischeverbrauch": 60, "skillpunkte": 180},
-    {"name": "Slalomdribbling", "dauer": 3, "frischeverbrauch": 30, "skillpunkte": 102},
-    {"name": "Medizinball", "dauer": 3, "frischeverbrauch": 50, "skillpunkte": 126},
+    {"name": "Langhanteln II", "dauer": 3, "frischeverbrauch": 60, "skillpunkte": 180},
+    {"name": "Slalomdribbling II", "dauer": 3, "frischeverbrauch": 30, "skillpunkte": 102},
+    {"name": "Medizinball II", "dauer": 3, "frischeverbrauch": 50, "skillpunkte": 126},
     {"name": "Joggen m. Ball", "dauer": 1, "frischeverbrauch": 20, "skillpunkte": 34},
     {"name": "Passen", "dauer": 1, "frischeverbrauch": 15, "skillpunkte": 36},
     {"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24},
-    {"name": "Torwand", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76},
+    {"name": "Torwand II", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76},
     {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0}  # Auslaufen mit -13 Frischeverbrauch
 ]
 
