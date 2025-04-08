@@ -14,7 +14,8 @@ default_einheiten = [
     {"name": "Passen", "dauer": 1, "frischeverbrauch": 15, "skillpunkte": 36, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 30, "technik": 0},
     {"name": "Jonglieren", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 20},
     {"name": "Torwand II", "dauer": 2, "frischeverbrauch": 25, "skillpunkte": 76, "kondition": 0, "kraft": 33, "schnelligkeit": 0, "passen": 0, "technik": 30},
-    {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 0}  # Auslaufen mit -13 Frischeverbrauch
+    {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 0},
+    {"name": "Schlafen", "dauer": 6, "frischeverbrauch": -100, "skillpunkte": 0, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 0},
 ]
 
 # Speichern der Einheiten im Streamlit-Speicher
@@ -55,7 +56,7 @@ def main():
 
     st.subheader("🔢 Parameter wählen")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
-    verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 24, 10)
+    verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 48, 10)
 
     if st.button("🔍 Beste Kombinationen berechnen"):
         # Berechne Kombinationen mit Auslaufen, welches eine negative Frische verbraucht
