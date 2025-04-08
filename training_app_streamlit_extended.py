@@ -54,7 +54,7 @@ def berechne_best_kombinationen(einheiten, max_frische, verfuegbare_zeit, top_n=
 def main():
     st.title("⚽ Trainingsplan-Optimierer")
 
-    st.subheader("🔢 Parameter wählen")
+    st.subheader("🔢 Eingaben")
     restfrische = st.slider("Restfrische (0–100)", 0, 100, 80)
     verfuegbare_zeit = st.slider("Verfügbare Zeit (in Stunden)", 1, 48, 10)
 
