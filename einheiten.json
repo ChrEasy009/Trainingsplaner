@@ -33,5 +33,6 @@
   {"name": "Radfahren I", "dauer": 3, "frischeverbrauch": 50, "skillpunkte": 90, "kondition": 50, "kraft": 0, "schnelligkeit": 25, "passen": 0, "technik": 0},
   {"name": "Springseil", "dauer": 1, "frischeverbrauch": 10, "skillpunkte": 24, "kondition": 0, "kraft": 20, "schnelligkeit": 0, "passen": 0, "technik": 0},
   {"name": "Home-Workout", "dauer": 1, "frischeverbrauch": 30, "skillpunkte": 8, "kondition": 2, "kraft": 2, "schnelligkeit": 2, "passen": 1, "technik": 1},
-  {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 0}
+  {"name": "Auslaufen", "dauer": 1, "frischeverbrauch": -13, "skillpunkte": 0, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 0},
+  {"name": "Schlafen", "dauer": 6, "frischeverbrauch": -100, "skillpunkte": 0, "kondition": 0, "kraft": 0, "schnelligkeit": 0, "passen": 0, "technik": 0}
 ]
